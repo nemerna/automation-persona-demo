@@ -1,0 +1,53 @@
+---
+- name: Setup Demo Host - Install and Configure Nginx
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.dnf:
+        name: nginx
+        state: present
+
+    - name: Create web root directory
+      ansible.builtin.file:
+        path: /usr/share/nginx/html
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Deploy production web application page
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /usr/share/nginx/html/index.html
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Deploy nginx configuration
+      ansible.builtin.template:
+        src: templates/webapp.conf.j2
+        dest: /etc/nginx/conf.d/webapp.conf
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Remove default nginx server block if present
+      ansible.builtin.file:
+        path: /etc/nginx/conf.d/default.conf
+        state: absent
+
+    - name: Ensure nginx is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Open firewall for HTTP traffic
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        state: enabled
+        immediate: true
+      ignore_errors: true
