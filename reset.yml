@@ -5,14 +5,14 @@
 
   tasks:
     - name: Ensure nginx is installed
-      ansible.builtin.dnf:
+      ansible.builtin.apt:
         name: nginx
         state: present
 
     - name: Restore production web application page
       ansible.builtin.copy:
         src: files/index.html
-        dest: /usr/share/nginx/html/index.html
+        dest: /var/www/html/index.html
         owner: root
         group: root
         mode: "0644"
@@ -20,7 +20,7 @@
     - name: Restore working nginx configuration
       ansible.builtin.template:
         src: templates/webapp.conf.j2
-        dest: /etc/nginx/conf.d/webapp.conf
+        dest: /etc/nginx/sites-available/default
         owner: root
         group: root
         mode: "0644"
