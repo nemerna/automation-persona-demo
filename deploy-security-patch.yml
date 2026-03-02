@@ -10,10 +10,9 @@
         state: stopped
 
     - name: Install security patch
-      ansible.builtin.apt:
+      ansible.builtin.dnf:
         name: "{{ security_patch_package }}"
         state: present
-        update_cache: true
 
     - name: Deploy patched configuration
       ansible.builtin.template:

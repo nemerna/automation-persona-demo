@@ -4,13 +4,8 @@
   become: true
 
   tasks:
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 3600
-
     - name: Install nginx
-      ansible.builtin.apt:
+      ansible.builtin.dnf:
         name: nginx
         state: present
 
@@ -33,7 +28,7 @@
     - name: Deploy nginx configuration
       ansible.builtin.template:
         src: templates/webapp.conf.j2
-        dest: /etc/nginx/sites-available/default
+        dest: /etc/nginx/conf.d/webapp.conf
         owner: root
         group: root
         mode: "0644"
